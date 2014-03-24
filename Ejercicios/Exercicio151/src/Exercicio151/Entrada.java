@@ -266,6 +266,7 @@ class Usuario{
         }
         return idUsu;
     }
+        
     
     public Usuario(String login, String clave) {
         this.login = login;
