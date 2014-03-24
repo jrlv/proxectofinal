@@ -1,0 +1,16 @@
+<base nome="cars">
+	<taboa nome="marca">
+			<columna tipo="int" extra="primary key">id</columna>
+			<columna tipo="varchar(100)" extra="not null">nome</columna>
+			<columna tipo="varchar(100)" extra="not null">pais</columna>
+			<fila num="1">'1', 'Fiat', 'Italia'</fila>
+			<fila num="2">'2', 'Seat', 'España'</fila>
+	</taboa>
+	<taboa nome="modelo">
+			<columna tipo="int" extra="primary key">identificador</columna>
+			<columna tipo="varchar(100)" extra="not null">modelo</columna>
+			<columna tipo="float" extra="not null">prezo</columna>
+			<fila num="1">'1', 'Ritmo', '1500'</fila>
+			<fila num="2">'2', 'Leon', '24000'</fila>			
+	</taboa>
+</base>
