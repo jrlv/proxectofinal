@@ -227,7 +227,6 @@ public class EnlacesUsuarios extends javax.swing.JFrame {
     }
 
     int público;
-    
     if (jCheckBox1Público.isSelected()){
         público=1;
         novoEnlace = new Enlace(jTextField3.getText(), jTextField4.getText(), jTextField5.getText(), Integer.parseInt(jTextField8.getText()), público);
