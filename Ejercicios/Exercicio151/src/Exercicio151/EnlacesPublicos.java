@@ -9,6 +9,7 @@ import javax.swing.DefaultListModel;
 public class EnlacesPublicos extends javax.swing.JFrame {
 
     public DefaultListModel modelo;
+    
     public EnlacesPublicos() {
         initComponents();
         setLocationRelativeTo(null);

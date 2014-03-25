@@ -344,27 +344,7 @@ class Usuario{
 class Enlace{
     
     public static ArrayList<Enlace> enlaces = new ArrayList<Enlace>();
-    //public static ArrayList<String> nomeetiqueta = new ArrayList<String>();
-    
-    
-    public static void obterEnlaces(){
-            Enlace novoEnlace = new Enlace();
-            try{
-                PreparedStatement pm = Entrada.connection.prepareStatement("SELECT * FROM enlaces");
-                ResultSet rsm = pm.executeQuery();
-                while(rsm.next()){
-                    novoEnlace.setId(rsm.getInt("id"));
-                    novoEnlace.setTítulo(rsm.getString("título"));
-                    novoEnlace.setComentario(rsm.getString("comentario"));
-                    novoEnlace.setEtiquetas(rsm.getString("etiquetas"));
-                    novoEnlace.setIdUsuario(rsm.getInt("idUsuario"));
-                    novoEnlace.setPúblico(rsm.getInt("público"));
-                    enlaces.add(novoEnlace);
-                }
-           }catch (SQLException e){
-                e.printStackTrace();
-           }
-    }
+
     int id;
     String título;
     String comentario;
@@ -381,7 +361,47 @@ class Enlace{
     }
     
     public Enlace(){}
+    
+    public static void engadir(String título, String comentario, String etiquetas, int idUsuario, int público){
+        try{
+            PreparedStatement psE = Entrada.connection.prepareStatement("INSERT INTO enlaces VALUES (null, ?,?,?,?,?)", Statement.RETURN_GENERATED_KEYS);
+            psE.setString(1, título);
+            psE.setString(2, comentario);
+            psE.setString(3, etiquetas);
+            psE.setInt(4, idUsuario);
+            psE.setInt(5, público);
+            int inserido = psE.executeUpdate();
+            if(inserido > 0){
+                ResultSet rsIdE = psE.getGeneratedKeys();
+                if (rsIdE.next()){
+                    int idE = rsIdE.getInt(1);
+                } 
+            }
+        } catch (SQLException e){
+                e.printStackTrace();
+        }
+    }
 
+        public static void obterEnlaces(){
+            try{
+                PreparedStatement pm = Entrada.connection.prepareStatement("SELECT * FROM enlaces ORDER BY id");
+                ResultSet rsm = pm.executeQuery();
+                while(rsm.next()){
+                    Enlace novoEnlace = new Enlace();
+                    novoEnlace.setId(rsm.getInt("id"));
+                    novoEnlace.setTítulo(rsm.getString("título"));
+                    novoEnlace.setComentario(rsm.getString("comentario"));
+                    novoEnlace.setEtiquetas(rsm.getString("etiquetas"));
+                    novoEnlace.setIdUsuario(rsm.getInt("idUsuario"));
+                    novoEnlace.setPúblico(rsm.getInt("público"));
+                    enlaces.add(novoEnlace);
+                }
+                rsm.close();
+           } catch (SQLException e){
+                e.printStackTrace();
+           }
+    }
+        
     public int getId() {
         return id;
     }
@@ -432,10 +452,8 @@ class Enlace{
 
     @Override
     public String toString() {
-        return "id= " + id + ", título= " + título + ", comentario= " + comentario + ", etiquetas= " + nomeetiquetas + ", idUsuario= " + idUsuario;
+        return "Id= " + id + ", Título= " + título + ", Comentario= " + comentario + ", Etiquetas= " + nomeetiquetas + ", IdUsuario= " + idUsuario + "\n";
     }
-    
-
     
     public void Etiquetados (ArrayList<Etiqueta> etiquetas){
         try{

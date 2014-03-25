@@ -1,7 +1,9 @@
 package Exercicio151;
 
 
-import Exercicio151.Entrada;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
 public class EnlacesRexistro extends javax.swing.JFrame {
 
@@ -62,12 +64,14 @@ public class EnlacesRexistro extends javax.swing.JFrame {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(jLabel4)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jTextField2Clave, javax.swing.GroupLayout.PREFERRED_SIZE, 160, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jTextField2Clave, javax.swing.GroupLayout.PREFERRED_SIZE, 160, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jTextField1Mensaxe))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
                         .addGap(91, 91, 91)
                         .addComponent(jButton1Rexistro))
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(jTextField1Mensaxe, javax.swing.GroupLayout.PREFERRED_SIZE, 242, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addGap(111, 111, 111)
                         .addComponent(jButton1Inicio)))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
@@ -99,8 +103,20 @@ public class EnlacesRexistro extends javax.swing.JFrame {
 
     private void jButton1RexistroActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1RexistroActionPerformed
         Usuario actual = new Usuario(jTextField1Nome.getText(), jTextField2Clave.getText());
-        actual.gardar(actual);
-        jTextField1Mensaxe.setText("BENVIDO");
+        try{
+            PreparedStatement pU = Entrada.connection.prepareStatement("SELECT * FROM usuarios WHERE login = ? AND clave = ?");
+            pU.setString(1, jTextField1Nome.getText());
+            pU.setString(2, jTextField2Clave.getText());
+            ResultSet rspU = pU.executeQuery();
+            if(rspU.next()){
+                jTextField1Mensaxe.setText("O usuario xa existe, use outro nome e contrasinal");
+            } else {
+                actual.gardar(actual);
+                jTextField1Mensaxe.setText("BENVIDO");
+            }
+        }catch (SQLException e){
+            e.printStackTrace();
+        }
     }//GEN-LAST:event_jButton1RexistroActionPerformed
 
     /**
