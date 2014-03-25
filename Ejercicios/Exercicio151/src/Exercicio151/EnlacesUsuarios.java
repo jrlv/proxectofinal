@@ -8,9 +8,8 @@ import java.sql.Statement;
 import java.util.ArrayList;
 
 public class EnlacesUsuarios extends javax.swing.JFrame {
-    ArrayList<Enlace> enlaces = new ArrayList<Enlace>();
+    
     ArrayList<String> etiquetas = new ArrayList<String>();
-    Enlace novoEnlace;
 
     public EnlacesUsuarios() {
         initComponents();
@@ -25,6 +24,7 @@ public class EnlacesUsuarios extends javax.swing.JFrame {
         jCheckBox1Público.setVisible(false);
         jCheckBox2Privado.setVisible(false);
         jButton2Engadir.setVisible(false);
+        
         Enlace.obterEnlaces();
         jTextArea1.setText(Enlace.enlaces.toString());
     }
@@ -215,40 +215,33 @@ public class EnlacesUsuarios extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButton1InicioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1InicioActionPerformed
+        
         Entrada entrada = new Entrada();
         entrada.setVisible(true);
         dispose();
+        
     }//GEN-LAST:event_jButton1InicioActionPerformed
 
     private void jButton2EngadirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2EngadirActionPerformed
         
-    for(String et : jTextField5.getText().split(",")){
-        etiquetas.add(et);
-    }
-
-    int público;
-    if (jCheckBox1Público.isSelected()){
-        público=1;
-        novoEnlace = new Enlace(jTextField3.getText(), jTextField4.getText(), jTextField5.getText(), Integer.parseInt(jTextField8.getText()), público);
-        enlaces.add(novoEnlace);
-    } else {
-        if(jCheckBox2Privado.isSelected()){
+        for(String et : jTextField5.getText().split(",")){
+            etiquetas.add(et);
+        }
+        int público;
+        if (jCheckBox1Público.isSelected()){
+            público=1;
+            Enlace.engadir(jTextField3.getText(), jTextField4.getText(), jTextField5.getText(), Integer.parseInt(jTextField8.getText()), público);
+                
+        } else {
+            if(jCheckBox2Privado.isSelected()){
             público=0;
-            novoEnlace = new Enlace(jTextField3.getText(), jTextField4.getText(), jTextField5.getText(), Integer.parseInt(jTextField8.getText()), público);
-            enlaces.add(novoEnlace);
-        }
-    } 
-        
-    for(String etq : etiquetas){
-        try{
-            PreparedStatement pet = Entrada.connection.prepareStatement("INSERT INTO etiquetas VALUES(?, ?)");
-            pet.setInt(1, novoEnlace.getId());
-            pet.setString(2, etq);
-            int inseridas = pet.executeUpdate();
-        } catch (SQLException e){
-            e.printStackTrace();
-        }
-    }
+            Enlace.engadir(jTextField3.getText(), jTextField4.getText(), jTextField5.getText(), Integer.parseInt(jTextField8.getText()), público);
+            }
+        } 
+        jTextArea1.removeAll(); 
+        Enlace.obterEnlaces();
+        jTextArea1.setText(Enlace.enlaces.toString());
+
     }//GEN-LAST:event_jButton2EngadirActionPerformed
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed

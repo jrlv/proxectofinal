@@ -383,6 +383,7 @@ class Enlace{
     }
 
         public static void obterEnlaces(){
+            enlaces.removeAll(enlaces);
             try{
                 PreparedStatement pm = Entrada.connection.prepareStatement("SELECT * FROM enlaces ORDER BY id");
                 ResultSet rsm = pm.executeQuery();
