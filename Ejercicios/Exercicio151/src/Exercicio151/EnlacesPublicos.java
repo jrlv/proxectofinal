@@ -4,36 +4,19 @@ package Exercicio151;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import javax.swing.DefaultListModel;
+import java.util.ArrayList;
 
 public class EnlacesPublicos extends javax.swing.JFrame {
-
-    public DefaultListModel modelo;
     
     public EnlacesPublicos() {
         initComponents();
         setLocationRelativeTo(null);
         setTitle("Enlaces públicos");
-        modelo = new DefaultListModel();
-        jList1.setModel(modelo);
-        mostrarEtiquetas();
+        Etiqueta.mostrarEtiquetas();
+        jList1.setModel(Etiqueta.modelo);
+        Enlace.obterEnlacesPúblicos();
+        jTextArea2EnlacesPúblicos.setText(Enlace.enlacesPúblicos.toString());
 
-    }
-    
-    private void mostrarEtiquetas(){
-        try{
-        PreparedStatement pre = Entrada.connection.prepareStatement("SELECT * FROM etiquetas");
-        ResultSet preRs = pre.executeQuery();
-        while(preRs.next()){
-            Etiqueta etiq = new Etiqueta();
-            etiq.setTexto(preRs.getString("texto"));
-            modelo.addElement(etiq.getTexto());
-        }
-        preRs.close();
-        }catch (SQLException e){
-            e.printStackTrace();
-        }
-        
     }
 
     /**
@@ -67,7 +50,7 @@ public class EnlacesPublicos extends javax.swing.JFrame {
         jTextArea2EnlacesPúblicos.setRows(5);
         jScrollPane2.setViewportView(jTextArea2EnlacesPúblicos);
 
-        jLabel1Enlaces.setText("ENLACES:");
+        jLabel1Enlaces.setText("ENLACES PÚBLICOS:");
 
         jList1.setModel(new javax.swing.AbstractListModel() {
             String[] strings = { "Item 1", "Item 2", "Item 3", "Item 4", "Item 5" };
@@ -76,9 +59,9 @@ public class EnlacesPublicos extends javax.swing.JFrame {
         });
         jScrollPane1.setViewportView(jList1);
 
-        jLabel1.setText("Etiquetas:");
+        jLabel1.setText("ETIQUETAS:");
 
-        jButton1Buscar.setText("Buscar");
+        jButton1Buscar.setText("Buscar Enlaces");
         jButton1Buscar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton1BuscarActionPerformed(evt);
@@ -96,15 +79,17 @@ public class EnlacesPublicos extends javax.swing.JFrame {
                         .addGap(0, 0, Short.MAX_VALUE)
                         .addComponent(jButton1Inicio))
                     .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 98, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(jScrollPane1)
                             .addComponent(jLabel1)
-                            .addComponent(jButton1Buscar))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 37, Short.MAX_VALUE)
+                            .addComponent(jButton1Buscar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addGap(18, 18, 18)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel1Enlaces)
-                            .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 495, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                .addGap(32, 32, 32))
+                            .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 604, Short.MAX_VALUE)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(jLabel1Enlaces)
+                                .addGap(0, 0, Short.MAX_VALUE)))))
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -114,15 +99,15 @@ public class EnlacesPublicos extends javax.swing.JFrame {
                     .addComponent(jLabel1Enlaces)
                     .addComponent(jLabel1))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 225, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(21, 21, 21)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addComponent(jScrollPane1)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jButton1Buscar)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jButton1Inicio)
-                .addContainerGap(15, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         pack();
@@ -135,20 +120,24 @@ public class EnlacesPublicos extends javax.swing.JFrame {
     }//GEN-LAST:event_jButton1InicioActionPerformed
 
     private void jButton1BuscarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1BuscarActionPerformed
-        for(Object etiq : jList1.getSelectedValuesList()){
+        jTextArea2EnlacesPúblicos.removeAll();
+        for(Object et : jList1.getSelectedValuesList()){
             try{
-                PreparedStatement prEn = Entrada.connection.prepareStatement("SELECT * FROM enlaces WHERE id = ? AND público = 1");
-                prEn.setInt(1, ((Etiqueta)etiq).getIdEnlace());
-                ResultSet r = prEn.executeQuery();
-                if(r.next()){
-                    jTextArea2EnlacesPúblicos.setText(r.toString());
-                } else {
-                    jTextArea2EnlacesPúblicos.setText("Non hai enlaces públicos que conteñan as etiquetas seleccionadas.");
+                PreparedStatement pb = Entrada.connection.prepareStatement("SELECT * FROM enlaces WHERE id = ? AND público = 1");
+                pb.setInt(1, ((Etiqueta)et).getIdEnlace());
+                ResultSet resEt = pb.executeQuery();
+                ArrayList<Enlace> enlazados = new ArrayList<Enlace>();
+                while(resEt.next()){
+                    Enlace enlace = new Enlace();
+                    enlace.setId(resEt.getInt("id"));
+                    enlace.setTítulo(resEt.getString("título"));
+                    enlazados.add(enlace);
+                    jTextArea2EnlacesPúblicos.setText(jTextArea2EnlacesPúblicos.getText() + resEt.toString());
                 }
-            } catch(SQLException e){
+                resEt.close();
+            } catch (SQLException e){
                 e.printStackTrace();
             }
-            
         }
     }//GEN-LAST:event_jButton1BuscarActionPerformed
 
