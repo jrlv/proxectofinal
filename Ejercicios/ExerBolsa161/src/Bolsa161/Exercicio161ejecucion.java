@@ -21,7 +21,7 @@ public class Exercicio161ejecucion {
             novoC.setLogin("Pepe");
             //novoC.comprar(2, 2);
             //novoC.vender(1, 1);
-            novoC.valorar();
+            //novoC.valorar();
         } else{
             System.out.println("Cliente seleccionado descoñecido.");
         }
