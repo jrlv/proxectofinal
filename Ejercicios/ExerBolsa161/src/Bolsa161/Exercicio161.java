@@ -26,7 +26,11 @@ interface Inversor{
     float valorar();
 }
 
-class BolsaEnBD implements Bolsa{
+interface Resumir{
+    String resumir();
+}
+
+class BolsaEnBD implements Bolsa, Resumir{
     
     private int idEmpresa;
     private String nome;
@@ -34,15 +38,15 @@ class BolsaEnBD implements Bolsa{
     
     public static Connection con;
         
-    public @Override
-    boolean iniciar(){
+    
+    public boolean iniciar(){
         boolean iniciado = false;
         try{    
             con = DriverManager.getConnection("jdbc:mysql://localhost:3308/", "root", "1234");
         }catch(SQLException e){
             System.out.println(e.getLocalizedMessage());
         }        
-        Statement st = null;
+        Statement st;
         try{
             st = con.createStatement();
             st.execute("CREATE DATABASE IF NOT EXISTS bolsa");
@@ -51,7 +55,7 @@ class BolsaEnBD implements Bolsa{
             st.execute("CREATE TABLE IF NOT EXISTS clientes(login varchar(50), clave varchar(50), capital float)");
             st.execute("CREATE TABLE IF NOT EXISTS carteira(idEmpresa int, cliente varchar(50), cantidade int)");
             iniciado = true;
-            System.out.println("Base de datos creada.");
+            System.out.println("Base de datos conectada.");
 
         } catch(SQLException e){
             System.out.println(e.getLocalizedMessage());
@@ -59,9 +63,9 @@ class BolsaEnBD implements Bolsa{
         return iniciado;
     }
     
-    boolean inserirAccions(int idEmpresa, String nome, float valor){
+    public boolean inserirAccions(int idEmpresa, String nome, float valor){
         boolean inserida = false;
-        PreparedStatement pst = null;
+        PreparedStatement pst;
         try{
             pst = con.prepareStatement("SELECT * FROM accions WHERE idEmpresa = ?");
             pst.setInt(1, idEmpresa);
@@ -85,10 +89,10 @@ class BolsaEnBD implements Bolsa{
         return inserida;
     }
     
-    public @Override
-    boolean novo(String login, String clave, float capital){
+    
+    public boolean novo(String login, String clave, float capital){
         boolean creado = false;
-        PreparedStatement ps = null;
+        PreparedStatement ps;
         try{
             ps = con.prepareStatement("SELECT login FROM clientes WHERE login = ?");
             ps.setString(1, login);
@@ -116,10 +120,9 @@ class BolsaEnBD implements Bolsa{
         return creado;
     }
     
-    public @Override
-    boolean identificar(String login, String clave){
+    public boolean identificar(String login, String clave){
         boolean identificado = false;
-        PreparedStatement ps = null;
+        PreparedStatement ps;
         String clienteActual = null;
         try{
             ps = con.prepareStatement("SELECT * FROM clientes WHERE login = ? AND clave = ?");
@@ -129,7 +132,7 @@ class BolsaEnBD implements Bolsa{
             if(rs.next()){
                 identificado = true;
                 clienteActual = rs.getString("login");
-                System.out.println("Cliente seleccionado: " + clienteActual);
+                System.out.println("Cliente identificado: " + clienteActual);
             }  
         }catch(SQLException e){
             System.out.println(e.getLocalizedMessage());
@@ -137,16 +140,16 @@ class BolsaEnBD implements Bolsa{
         return identificado;
     }
     
-    public @Override
-    boolean actualizar(){
+    public boolean actualizar(){
         boolean actualizado = false;
+        PreparedStatement p;
         try{
-            PreparedStatement p = con.prepareStatement("SELECT * FROM accions");
+            p = con.prepareStatement("SELECT * FROM accions");
             ResultSet rs = p.executeQuery();
             while(rs.next()){
                 int id = rs.getInt(1);
                 float valorActual = rs.getFloat(3);
-                float variacionValor = (float)(Math.random()*5)+1;
+                float variacionValor = (((float)(Math.random()*5)+1) - ((float)(Math.random()*5)+1));
                 try{
                     p = con.prepareStatement("UPDATE accions SET valor = ? WHERE idEmpresa = ?");
                     p.setFloat(1, valorActual + variacionValor);
@@ -163,10 +166,56 @@ class BolsaEnBD implements Bolsa{
             System.out.println(e.getLocalizedMessage());
         }
         return actualizado;
-    }            
+    }
+    
+    public String resumir(){
+        float valorBolsa = 0;
+        PreparedStatement pr;
+        try{
+            pr = con.prepareStatement("SELECT SUM(valor) AS valorBolsa FROM accions");
+            ResultSet rr = pr.executeQuery();
+            
+            while(rr.next()){
+                valorBolsa = rr.getFloat("valorBolsa");
+            }
+            rr.close();
+        }catch(SQLException e){
+            System.out.println(e.getLocalizedMessage());
+        }
+        
+        float cartos = 0;
+        try{
+            pr = BolsaEnBD.con.prepareStatement("SELECT SUM(capital) AS cartos FROM clientes");
+            ResultSet ri = pr.executeQuery();
+            while(ri.next()){
+                cartos = ri.getFloat("cartos");
+            }
+            ri.close();
+        }catch(SQLException e){
+            System.out.println(e.getLocalizedMessage());
+        }
+        
+        int inversores = 0;
+        try{
+            pr = BolsaEnBD.con.prepareStatement("SELECT COUNT(login) AS clientes FROM clientes");
+            ResultSet rc = pr.executeQuery();
+            while(rc.next()){
+                inversores = rc.getInt("clientes");
+            }
+            rc.close();
+        }catch (SQLException e){
+            System.out.println(e.getLocalizedMessage());
+        }
+        System.out.println("Os inversores dispoñen actualmente de " + cartos + " euros para inversións.");
+        System.out.println("O valor actual da Bolsa é de: " + valorBolsa + " euros.");
+        System.out.println("Neste momento temos " + inversores + " clientes na base de datos da bolsa.");
+        return "O valor actual da Bolsa é de: " + valorBolsa + " euros." + "\n"
+                + "Os inversores dispoñen actualmente de " + cartos + " euros para inversións." + "\n"
+                + "Neste momento temos " + inversores + " clientes na base de datos da bolsa.";
+    }
 }
 
-class Cliente implements Inversor{
+class Cliente implements Inversor, Resumir{
     
     private String clave;
     private String login;
@@ -197,10 +246,9 @@ class Cliente implements Inversor{
         }
     
     
-    public @Override
-    boolean comprar(int idEmpresa, int cantidade){
+    public boolean comprar(int idEmpresa, int cantidade){
         boolean comprou = false;
-        PreparedStatement p = null;
+        PreparedStatement p;
         try{
             p = BolsaEnBD.con.prepareStatement("SELECT valor FROM accions WHERE idEmpresa = ?");
             p.setFloat(1, idEmpresa);
@@ -256,10 +304,9 @@ class Cliente implements Inversor{
         return comprou;
     }
     
-    public @Override
-    boolean vender(int idEmpresa, int cantidade){
+    public boolean vender(int idEmpresa, int cantidade){
         boolean vendido = false;
-        PreparedStatement p = null;
+        PreparedStatement p;
         try{
             p = BolsaEnBD.con.prepareStatement("SELECT valor FROM accions WHERE idEmpresa = ?");
             p.setFloat(1, idEmpresa);
@@ -310,10 +357,9 @@ class Cliente implements Inversor{
         return vendido;
     }
     
-    public @Override
-    float valorar(){
+    public float valorar(){
         float valor = 0;
-        PreparedStatement pv = null;
+        PreparedStatement pv;
         try{
             pv = BolsaEnBD.con.prepareStatement("SELECT SUM(cantidade*valor) AS valoracion FROM carteira INNER JOIN accions ON carteira.idEmpresa = accions.idEmpresa WHERE carteira.cliente = ?");
             pv.setString(1, this.getLogin());
@@ -327,6 +373,24 @@ class Cliente implements Inversor{
             System.out.println(e.getLocalizedMessage());
         }
     return valor;
-    }        
+    }
+    
+    public String resumir(){
+        float capitalTotal = 0;
+        PreparedStatement pr;
+        try{
+            pr = BolsaEnBD.con.prepareStatement("SELECT capital FROM clientes WHERE login = ?");
+            pr.setString(1, this.getLogin());
+            ResultSet rt = pr.executeQuery();
+            while(rt.next()){
+                capitalTotal = this.valorar() + rt.getFloat("capital");
+            }
+            rt.close();
+        }catch(SQLException e){
+            System.out.println(e.getLocalizedMessage());
+        }
+        System.out.println(this.getLogin() + " ten " + capitalTotal + " euros, sumando o capital e os cartos invertidos.");
+        return this.getLogin() + " ten " + capitalTotal + " euros, sumando o capital e os cartos invertidos.";
+    }
 }
 
