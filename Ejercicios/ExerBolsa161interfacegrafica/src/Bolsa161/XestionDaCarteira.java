@@ -14,7 +14,7 @@ import net.proteanit.sql.DbUtils;
  * @author JRLV
  */
 public class XestionDaCarteira extends javax.swing.JFrame {
-
+    
     BolsaEnBD novaB = new BolsaEnBD();
     Cliente novoC = new Cliente();
 
@@ -28,7 +28,7 @@ public class XestionDaCarteira extends javax.swing.JFrame {
         jButton3Vender.setVisible(false);
     }
 
-private void verCarteira(){
+public void verCarteira(){
     PreparedStatement pb;
     jTable3Carteira.removeAll();
     try{
@@ -42,7 +42,7 @@ private void verCarteira(){
     }
 }
 
-private void verBolsa(){
+public void verBolsa(){
     PreparedStatement pb;
     jTable3Bolsa.removeAll();
     try{
@@ -330,6 +330,7 @@ private void verBolsa(){
         if(novaB.identificar(jTextField4Login.getText(), jTextField9Clave.getText())){
             jTextField1Mensaxe.setText("Inversor atopado.");
             novoC.setLogin(jTextField4Login.getText());
+            novoC.setB(novaB);
             jTable3Carteira.setVisible(true);
             jTable3Bolsa.setVisible(true);
             verCarteira();
@@ -348,8 +349,12 @@ private void verBolsa(){
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void jButton3VenderActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3VenderActionPerformed
-        novoC.vender(Integer.parseInt(jTextField3IdEmpresaVenta.getText()), Integer.parseInt(jTextField4CantidadeVenta.getText()));
-        verCarteira();
+       if(novoC.vender(Integer.parseInt(jTextField3IdEmpresaVenta.getText()), Integer.parseInt(jTextField4CantidadeVenta.getText()))) {
+            verCarteira();
+            jTextField1Mensaxe.setText("Venta executada correctamente.");
+       }else {
+           jTextField1Mensaxe.setText("As condicións da venta non son executables.");
+       }
     }//GEN-LAST:event_jButton3VenderActionPerformed
 
 private void jButtonResumoInversorActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonResumoInversorActionPerformed
@@ -358,11 +363,17 @@ private void jButtonResumoInversorActionPerformed(java.awt.event.ActionEvent evt
 
 private void jButtonResumoBolsaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonResumoBolsaActionPerformed
     jTextArea1.setText(novaB.resumir());
+    jTable3Bolsa.setVisible(true);
+    verBolsa();
 }//GEN-LAST:event_jButtonResumoBolsaActionPerformed
 
     private void jButton2ComprarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ComprarActionPerformed
-        novoC.comprar(Integer.parseInt(jTextField1IdEmpresaCompra.getText()), Integer.parseInt(jTextField2CantidadeCompra.getText()));
-        verCarteira();        // TODO add your handling code here:
+        if(novoC.comprar(Integer.parseInt(jTextField1IdEmpresaCompra.getText()), Integer.parseInt(jTextField2CantidadeCompra.getText()))) {
+            verCarteira();
+            jTextField1Mensaxe.setText("Compra executada correctamente.");
+        }else {
+           jTextField1Mensaxe.setText("As condicións da compra non son executables.");
+       }
     }//GEN-LAST:event_jButton2ComprarActionPerformed
 
     private void jButton2ValorarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ValorarActionPerformed
