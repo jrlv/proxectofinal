@@ -316,7 +316,7 @@ class Cliente implements Inversor, Resumir{
                 p.setString(1, this.getLogin());
                 ResultSet rc = p.executeQuery();
                 float capitalActual = 0;
-                while(rc.next()){
+                if(rc.next()){
                     capitalActual = rc.getFloat("capital");
                     if(capitalActual >= costeCompra){
                         p = b.getCon().prepareStatement("UPDATE clientes SET capital = ? WHERE login = ?");
@@ -335,6 +335,8 @@ class Cliente implements Inversor, Resumir{
                             p.setString(2, this.getLogin());
                             p.setInt(3, idEmpresa);
                             p.executeUpdate();
+                            comprou = true;
+                            System.out.println("Compra de accións realizada correctamente.");
                         }else {
                             p = b.getCon().prepareStatement("INSERT INTO carteira VALUES(?,?,?)");
                             p.setInt(1, idEmpresa);
@@ -347,8 +349,9 @@ class Cliente implements Inversor, Resumir{
                     }else {
                         System.out.println(this.getLogin() + " non ten cartos para esta compra.");
                     }
+                }else {
+                    System.out.println("Erro no nome do cliente.");
                 }
-                rc.close();
             }else {
                 System.out.println("Esta empresa non existe na base de datos.");
             }
