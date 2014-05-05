@@ -43,7 +43,7 @@ public class servidor172 {
                 try {
                     con = DriverManager.getConnection("jdbc:mysql://localhost:3308/" + partes[1], "root", "1234");
                 } catch(SQLException e) {
-                    resposta = "Parece ser que " + e.getLocalizedMessage();
+                    resposta = "Parece ser que non se pudo conectar coa base de datos. " + e.getLocalizedMessage();
                 }
                 if(partes[0].equals("list")){
                     try{
