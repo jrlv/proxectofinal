@@ -28,7 +28,7 @@ public class servidor172 {
         try {
             con = DriverManager.getConnection("jdbc:mysql://localhost:3308/", "root", "1234");
         } catch(SQLException e) {
-            System.out.println(e.getLocalizedMessage());
+            System.out.println("Erro do servidor. " + e.getLocalizedMessage());
         }
         
         while(true) {            
@@ -43,7 +43,8 @@ public class servidor172 {
                 try {
                     con = DriverManager.getConnection("jdbc:mysql://localhost:3308/" + partes[1], "root", "1234");
                 } catch(SQLException e) {
-                    resposta = "Parece ser que non se pudo conectar coa base de datos. " + e.getLocalizedMessage();
+                    resposta = "Parece ser que a base de datos introducida non existe. " + e.getLocalizedMessage();
+                    outToClient.writeBytes(resposta);
                 }
                 if(partes[0].equals("list")){
                     try{
@@ -66,7 +67,7 @@ public class servidor172 {
                         PreparedStatement nm = con.prepareStatement("SELECT COUNT(*) AS total FROM " + partes[1] + "." + partes[2]);
                         ResultSet rnm = nm.executeQuery();
                         while(rnm.next()){
-                            resposta = "A base " + partes[1] + " ten: " + Integer.toString(rnm.getInt("total")) + " táboas. " + '\n';
+                            resposta = "A táboa " + partes[2] + " ten: " + Integer.toString(rnm.getInt("total")) + " filas. " + '\n';
                             outToClient.writeBytes(resposta);
                         }
                         rnm.close();
@@ -94,10 +95,12 @@ public class servidor172 {
                         outToClient.writeBytes(resposta);
                     }catch (SQLException e){
                         resposta = "Fallou o borrado de datos de " + partes[2] + ". " + e.getLocalizedMessage() + '\n';
+                        outToClient.writeBytes(resposta);
                     }
                 }
             } else{
                 resposta = "Protocolo incorrecto.";
+                outToClient.writeBytes(resposta);
             }
         }
     }
