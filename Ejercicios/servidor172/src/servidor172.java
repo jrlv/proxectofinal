@@ -1,3 +1,12 @@
+/*Precísase un servidor capaz de recibir peticións de clientes segundo o seguinte protocolo:
+opción::base de datos[::táboa][::novo_nome]
+na que as opcións posibles serán list, num, del e ren. No primeiro caso devolverase un
+listado cos nomes das táboas na base de datos, no segundo caso o número de filas da
+táboa, no terceiro eliminaranse todos os datos dunha táboa e no cuarto cambiarase o nome
+da táboa.
+En caso de erro habería que devolver unha mensaxe o máis significativa posible. O cliente
+será un GUI que oculte aos usuarios estes detalles de protocolo.*/
+
 import java.io.*;
 import java.net.*;
 import java.sql.Connection;
@@ -62,7 +71,7 @@ public class servidor172 {
                         }
                         rnm.close();
                     }catch (SQLException e){
-                        resposta = "Fallou. " + e.getLocalizedMessage() + '\n';
+                        resposta = "Fallou a consulta. " + e.getLocalizedMessage() + '\n';
                         outToClient.writeBytes(resposta);
                     }
                 }
@@ -73,7 +82,7 @@ public class servidor172 {
                         resposta = "O novo nome para a táboa " + partes[2] + " foi correctamente aplicado. " + '\n';
                         outToClient.writeBytes(resposta);
                     }catch (SQLException e){
-                        resposta = "Fallou. " + e.getLocalizedMessage() + '\n';
+                        resposta = "Fallou o intento de renombrar " + partes[2] + ". " + e.getLocalizedMessage() + '\n';
                         outToClient.writeBytes(resposta);
                     }
                 }
@@ -84,7 +93,7 @@ public class servidor172 {
                         resposta = "Borrado dos datos da táboa " + partes[2] + " realizado." + '\n';
                         outToClient.writeBytes(resposta);
                     }catch (SQLException e){
-                        resposta = "Fallou. " + e.getLocalizedMessage() + '\n';
+                        resposta = "Fallou o borrado de datos de " + partes[2] + ". " + e.getLocalizedMessage() + '\n';
                     }
                 }
             } else{
