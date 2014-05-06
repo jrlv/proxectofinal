@@ -8,6 +8,7 @@ porto=6677
 ruta=www/ficheiros
 extensions=html,txt,jpg,gif
 erro404=nonatopado.html
+erroExt=Ext.txt
 O programa, no seu inicio, deberá ler o ficheiro para incorporar eses valores a un HashMap
 do que poder extraer a información cando sexa preciso.*/
 
@@ -42,7 +43,7 @@ public class Servidorweb173{
         }
 
         int myPort = Integer.parseInt(dato.get("porto"));
-        ServerSocket listenSocket = new ServerSocket (myPort);
+        ServerSocket listenSocket = new ServerSocket(myPort);
 
         while(true) {
             System.out.println ("Escoitando o porto " + myPort);
@@ -50,7 +51,7 @@ public class Servidorweb173{
             BufferedReader inFromClient = new BufferedReader (new InputStreamReader(connectionSocket.getInputStream()));
             DataOutputStream outToClient = new DataOutputStream (connectionSocket.getOutputStream());
             
-            // tratamos a primeira liña da petición
+            // traballamos na primeira liña da petición
             requestMessageLine = inFromClient.readLine();
             System.out.println (requestMessageLine);
 
@@ -70,6 +71,7 @@ public class Servidorweb173{
                     // ler o contido do ficheiro solicitado
                     File file = new File(fileName);
                     if (file.exists()) {
+                        
                         // converter o ficheiro nun array de bytes
                         int numOfBytes = (int) file.length();
                         FileInputStream inFile = new FileInputStream (fileName);
@@ -105,7 +107,7 @@ public class Servidorweb173{
                     outToClient.writeBytes("\r\n");
                     outToClient.write(fileInBytes, 0, numOfBytes);
                 }    
-                    // ler, sen tratar, o resto de liñas da petición
+                    // ler sen traballar o resto de liñas da petición
                     requestMessageLine = inFromClient.readLine();
                     while (requestMessageLine.length() >= 5) {
                         System.out.println (requestMessageLine);
