@@ -43,7 +43,7 @@ public class servidor172 {
                 try {
                     con = DriverManager.getConnection("jdbc:mysql://localhost:3308/" + partes[1], "root", "1234");
                 } catch(SQLException e) {
-                    resposta = "Parece ser que a base de datos introducida non existe. " + e.getLocalizedMessage();
+                    resposta = "Parece ser que a base de datos introducida non existe. " + e.getLocalizedMessage() + '\n';
                     outToClient.writeBytes(resposta);
                 }
                 if(partes[0].equals("list")){
@@ -51,11 +51,12 @@ public class servidor172 {
                         PreparedStatement ls = con.prepareStatement("SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = " + "'" + partes[1] + "'");
                         ResultSet rs = ls.executeQuery();
                         String resparcial = "";
+                        String respostaFinal = "";
                         while(rs.next()){
                             resparcial = resparcial + rs.getString("TABLE_NAME") + ", ";    
                         }
-                        resposta = "As táboas da base " + partes[1] + " son: " + resparcial + '\n';
-                        outToClient.writeBytes(resposta);
+                        respostaFinal = "As táboas da base " + partes[1] + " son: " + resparcial + '\n';
+                        outToClient.writeBytes(respostaFinal);
                         rs.close();
                     }catch(SQLException e){
                         resposta = "Xa que logo " + e.getLocalizedMessage() + '\n';
