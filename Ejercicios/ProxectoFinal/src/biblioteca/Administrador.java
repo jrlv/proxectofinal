@@ -186,7 +186,7 @@ public class Administrador extends javax.swing.JFrame {
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         
         Usuario actual = new Usuario(jTextField1.getText());
-        if(actual.ExisteLogin(jTextField1.getText())){
+        if(Usuario.ExisteLogin(jTextField1.getText())){
                 jTextArea1.setText("O nome " + actual.getNome() + " xa está rexistrado na base de datos.");
             } else{
                 if(actual.getNome().equals("")){
@@ -204,7 +204,7 @@ public class Administrador extends javax.swing.JFrame {
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         
         Usuario actual = new Usuario(jComboBox1.getSelectedItem().toString());
-        if(actual.ExisteLogin(actual.getNome())){
+        if(Usuario.ExisteLogin(actual.getNome())){
             actual.Baixa(actual.getNome());
             cargarUsuarios();
             jTextArea1.setText(actual.getNome() + " e os seus documentos foron eliminado da base de datos");
@@ -225,7 +225,7 @@ public class Administrador extends javax.swing.JFrame {
     // Comproba a existencia do administrador e si existe permite o acceso á xestión de usuarios
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
         Usuario admin = new Usuario(jTextField2.getText());
-        if(admin.ExisteAdmin(jTextField2.getText())){
+        if(Usuario.ExisteAdmin(jTextField2.getText())){
             jTextField3.setText("Hola. Podes xestionar os usuarios.");
             jButton1.setEnabled(true);
             jButton2.setEnabled(true);

@@ -36,8 +36,7 @@ public class Entrada extends javax.swing.JFrame {
             conex = DriverManager.getConnection("jdbc:mysql://localhost:3308/biblio", "root", "1234");
             System.out.println("Conexion correcta" + "\n");
         } catch(SQLException e) {
-            e.printStackTrace();
-            return;
+            System.out.println(e.getLocalizedMessage());
         }
     }
     
@@ -129,6 +128,7 @@ public class Entrada extends javax.swing.JFrame {
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
+            @Override
             public void run() {
                 new Entrada().setVisible(true);
             }
@@ -205,9 +205,9 @@ class Usuario{
      */
     public void Alta(String nome){
         int aleatorio = (int)(Math.random()*(9999-1)+1);
-        String contrasinal = Integer.toString(aleatorio);
-        System.out.println("CONTRASINAL para " + nome + ": " + contrasinal);
-        char[] array = contrasinal.toCharArray();
+        String contrasinalUsu = Integer.toString(aleatorio);
+        System.out.println("CONTRASINAL para " + nome + ": " + contrasinalUsu);
+        char[] array = contrasinalUsu.toCharArray();
         for (int i = 0; i<array.length; i++){
             array[i] = (char)(array[i] + (char)4);
         }
@@ -267,7 +267,7 @@ class Usuario{
                 existe = true;
             }
         } catch (SQLException e){
-            e.printStackTrace();
+            System.out.println(e.getLocalizedMessage());
         }
         return existe;
     }    
@@ -291,7 +291,7 @@ class Usuario{
                     }
                 }
             } catch (SQLException e){
-                e.printStackTrace();
+                System.out.println(e.getLocalizedMessage());
             }
         return existeAd;
         }
@@ -311,7 +311,7 @@ class Usuario{
                 existe = true;
             }
         } catch (SQLException e){
-            e.printStackTrace();
+            System.out.println(e.getLocalizedMessage());
         }
         return existe;
     }
@@ -331,8 +331,8 @@ class Libro{
     /**
      * Coleccións
      */
-    public static ArrayList<Libro> libros = new ArrayList<Libro>();
-    public static ArrayList<Libro> atopados = new ArrayList<Libro>();
+    public static ArrayList<Libro> libros = new ArrayList<>();
+    public static ArrayList<Libro> atopados = new ArrayList<>();
 
     /**
      * Constructor sen parámetros.
@@ -581,7 +581,7 @@ class Etiqueta{
     /**
      * Coleccións que acumulan as etiquetas.
      */
-    public static ArrayList<Etiqueta> etiqu = new ArrayList<Etiqueta>();
+    public static ArrayList<Etiqueta> etiqu = new ArrayList<>();
     public static DefaultListModel modelo = new DefaultListModel();
     
     /**
