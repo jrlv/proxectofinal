@@ -46,6 +46,7 @@ public class Usuarios extends javax.swing.JFrame {
         jScrollPane2.setEnabled(false);
         jScrollPane3.setEnabled(false);
         jScrollPane4.setEnabled(false);
+        jScrollPane5.setEnabled(false);
     }
 
     @SuppressWarnings("unchecked")
@@ -150,6 +151,7 @@ public class Usuarios extends javax.swing.JFrame {
         });
 
         jTextArea2.setColumns(20);
+        jTextArea2.setLineWrap(true);
         jTextArea2.setRows(5);
         jScrollPane4.setViewportView(jTextArea2);
 
@@ -393,6 +395,7 @@ public class Usuarios extends javax.swing.JFrame {
                 jScrollPane2.setEnabled(true);
                 jScrollPane3.setEnabled(true);
                 jScrollPane4.setEnabled(true);
+                jScrollPane5.setEnabled(true);
 
                 Libro.mostrarLibros(actual.getNome());
                 jTextArea1.setText(Libro.libros.toString());
@@ -428,6 +431,8 @@ public class Usuarios extends javax.swing.JFrame {
                 jScrollPane2.setEnabled(false);
                 jScrollPane3.setEnabled(false);
                 jScrollPane4.setEnabled(false);
+                jScrollPane5.setEnabled(false);
+                
             }
     }//GEN-LAST:event_jButton1ActionPerformed
     // Introdúcense os datos dun novo libro para engadir,
@@ -480,7 +485,7 @@ public class Usuarios extends javax.swing.JFrame {
                     atopado.setTitulo(rsEt.getString("titulo"));
                     atopado.setResume(rsEt.getString("resume"));
                     atopado.setEtiquetas(rsEt.getString("etiquetas"));
-                    String resultado = "TITULO: " + atopado.getTitulo() + ". RESUME: " + atopado.getResume() + ". ETIQUETAS: " + atopado.getEtiquetas() + "\n";
+                    String resultado = "TITULO: " + atopado.getTitulo() + ". ETIQUETAS: " + atopado.getEtiquetas() + "\n";
                     jTextArea2.setText(jTextArea2.getText() + resultado);
                 }
                 rsEt.close();
